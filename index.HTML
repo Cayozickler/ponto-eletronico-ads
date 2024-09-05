@@ -2,5 +2,29 @@
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="">
+        <meta name="viewport" content="widh=device-width, iitial-sacle=0.1">
+        <tittle>Sistema de controle de ponto </tittle>
+        <link rel="stylesheet" href="css/style.css">
+    
     </head>
+    <body>
+        <div class="data-hora">
+            <p id="dia-semana">Segunda-Feira</p>
+            <p id="dia-mes-ano">27/08/2024</p>
+            <p id="hora-min-seg">08:45:38</p>   
+        </div>
+            <dialog in="dialogo-ponto">
+                <p>Data</p>
+                <p>Hora</p>
+                <button>Entrada</button>
+                <button>Intervao</button>
+                <button>Volta-Inervalo</button>
+                <button>Saida</button>
+                <button id="bnt-dialog-fechar">Fechar</button>
+            </dialog>
+            <button id="bnt-registrar-ponto">Registrar ponto!</button>
+
+            <script src="js/index.js"></script>
+    </body>
+</html>
+   
