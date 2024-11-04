@@ -80,11 +80,19 @@ function editarRegistro(index) {
         return;
     }
 
+    
+    const dataAtual = new Date();
+    const novaDataObj = new Date(novaData.replace(/(\d{2})\/(\d{2})\/(\d{4}),\s(\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1T$4:$5:$6'));
+
+    if (novaDataObj > dataAtual) {
+        mostrarAviso("Não é possível atualizar para uma data futura.");
+        return;
+    }
+
     registros[index] = { tipo: novoTipo, data: novaData };
     localStorage.setItem("registros", JSON.stringify(registros));
     mostrarRelatorio();
     mostrarAviso(`Registro atualizado para ${capitalize(novoTipo)} com sucesso!`);
-
 }
 
 // Formato DD/MM/YYYY HH:MM:SS//
