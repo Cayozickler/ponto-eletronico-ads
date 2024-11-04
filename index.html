@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Ponto</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Controle de Ponto</h1>
+        <div id="currentDateTime"></div>
+
+        <button onclick="registrarPonto('Entrada')">Registrar Entrada</button>
+        <button onclick="registrarPonto('Saida')">Registrar Saída</button>
+        <button onclick="registrarPonto('IntervaloEntrada')">Registrar Entrada Intervalo</button>
+        <button onclick="registrarPonto('IntervaloSaida')">Registrar Saída Intervalo</button>
+        <button onclick="mostrarRelatorio()">Ver Relatório</button>
+
+        <div id="relatorio" class="hidden">
+            <button class="close" onclick="fecharRelatorio()">&times;</button>
+            <h2>Relatório de Registros</h2>
+            <div id="relatorioContent" class="relatorio-content"></div>
+        </div>
+        
+        <div id="popupAviso" class="popup hidden">
+            <div class="popup-content">
+                <p id="avisoMensagem">Aviso!</p>
+                <button class="close" onclick="fecharAviso()">X</button>
+            </div>
+        </div>
+        <div id="userInfo">
+            <h2>Bem-vindo, <span id="userName"></span>!</h2>
+        </div>
+        <script src="index.js"></script>
+        <script>
+            console.log('JavaScript carregado com sucesso!');
+        </script>
+    </div>
+</body>
+</html>
