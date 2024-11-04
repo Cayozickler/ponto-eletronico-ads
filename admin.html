@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciamento de Usuários</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js" defer></script>
+</head>
+<body>
+
+<div>
+    <input type="text" id="buscaNumeroCadastro" placeholder="Digite o número de cadastro" />
+    <button onclick="buscarUsuario()">Buscar</button>
+</div>
+
+<div id="formAtualizacao" style="display: none;">
+    <h3>Atualizar Usuário</h3>
+    <label>CPF:</label>
+    <input type="text" id="atualizarCPF" />
+    <label>Nome:</label>
+    <input type="text" id="atualizarNome" />
+    <input type="hidden" id="atualizarNumeroCadastro" />
+    <button onclick="atualizarDados()">Atualizar</button>
+</div>
+
+<div id="modalAviso" style="display: none;">
+    <p>CPF inválido! Por favor, insira um CPF no formato "000.000.000-00".</p>
+    <button onclick="fecharModal()">Fechar</button>
+</div>
+
+<div id="modalSucesso" style="display: none;">
+    <p>Dados atualizados com sucesso!</p>
+    <button onclick="fecharModalSucesso()">Fechar</button>
+</div>
+
+<table id="tabelaRegistros">
+    <thead>
+        <tr>
+            <th>CPF</th>
+            <th>Nome</th>
+            <th>Número de Cadastro</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<h2>Adicionar Novo Usuário</h2>
+<label>CPF: <input type="text" id="novoCPF" /></label>
+<label>Nome: <input type="text" id="novoNome" /></label>
+<button onclick="adicionarUsuario()">Adicionar</button>
+
+</body>
+</html>
