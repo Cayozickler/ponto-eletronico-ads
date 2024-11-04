@@ -1,113 +1,147 @@
-//Codigo organizaedo e finalizado.
+// Função para atualizar a data e hora atuais a cada segundo//
+function updateDateTime() {
 
+    const currentDateTime = new Date();
+    document.getElementById("currentDateTime").innerText = currentDateTime.toLocaleString();
 
-const diaSemana = document.getElementById("dia-semana");
-const diaMesAno = document.getElementById("dia-mes-ano");
-const horaMinSeg = document.getElementById("hora-min-seg");
-const dialogPonto = document.getElementById("dialog-ponto");
-const dialogHora = document.getElementById("dialog-hora");
-const btnRegistrarPonto = document.getElementById("btn-registrar-ponto");
-const btnDialogFechar = document.getElementById("btn-dialog-fechar");
-const btnDialogRegistrarPonto = document.getElementById("btn-dialog-registrar-ponto");
-const divAlerta = document.getElementById("div-alerta");
-const selectTiposPonto = document.getElementById("select-tipos-ponto");
-
-const arrayDayWeek = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-const proxPonto = {
-    "entrada": "intervalo",
-    "intervalo": "volta-intervalo",
-    "volta-intervalo": "saida",
-    "saida": "entrada"
-};
-
-function atualizarDataHora() {
-    diaSemana.textContent = daySemana();
-    diaMesAno.textContent = dataCompleta();
-    atualizaHora();
-    atualizaHoraDialog();
 }
 
-function getUserLocation() {
-    return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-            position => resolve({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
-            }),
-            error => reject(error)
-        );
+setInterval(updateDateTime, 1000);
+
+
+// Função para exibir o popup//
+function mostrarAviso(mensagem) {
+
+    const popupAviso = document.getElementById("popupAviso");
+    document.getElementById("avisoMensagem").innerText = mensagem;
+    popupAviso.classList.remove("hidden");
+    popupAviso.classList.add("show");
+
+    setTimeout(() => {
+
+        popupAviso.classList.remove("show");
+        setTimeout(() => {
+            popupAviso.classList.add("hidden");
+        }, 500);
+    }, 3000);
+
+}
+
+
+// Função para fechar o popup//
+function fecharAviso() {
+    const popupAviso = document.getElementById("popupAviso");
+
+    popupAviso.classList.remove("show");
+    setTimeout(() => {
+        popupAviso.classList.add("hidden");
+    }, 500);
+}
+
+
+// Função para exibir todos os registros salvos//
+function mostrarRelatorio() {
+    const registros = JSON.parse(localStorage.getItem('registros')) || [];
+    const relatorio = document.getElementById('relatorio');
+    const relatorioContent = document.getElementById('relatorioContent');
+
+    // Remove a classe "hidden" para mostrar o relatório
+    relatorio.classList.remove("hidden");
+    relatorioContent.innerHTML = ""; // Limpa o conteúdo antes de adicionar novos registros
+
+    registros.forEach((registro, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = 
+            `${capitalize(registro.tipo)}: ${registro.data}
+            <button onclick="editarRegistro(${index})">Editar</button>`;
+        relatorioContent.insertBefore(div, relatorioContent.firstChild);
     });
 }
 
-function recuperaPontosLocalStorage() {
-    const todosOsPontos = localStorage.getItem("registro");
-    return todosOsPontos ? JSON.parse(todosOsPontos) : [];
+
+// Função para editar registro//
+function editarRegistro(index) {
+    let registros = JSON.parse(localStorage.getItem("registros")) || [];
+    const registroOriginal = registros[index];
+
+    const novoTipo = prompt('Edite o tipo de registro (entrada, saida, intervaloEntrada, intervaloSaida):', registroOriginal.tipo);
+    const tiposValidos  = ['Entrada', 'Saida', 'IntervaloEntrada', 'IntervaloSaida'];
+
+    if (!tiposValidos.includes(novoTipo)) {
+        mostrarAviso("Tipo de registro inválido.");
+        return;
+
+    }
+
+    const novaData = prompt("Edite a data e hora do registro (DD/MM/YYYY HH:MM:SS):", registroOriginal.data);
+    
+    if (!validarDataHora(novaData)) {
+        mostrarAviso("Data e hora inválidas.");
+        return;
+    }
+
+    registros[index] = { tipo: novoTipo, data: novaData };
+    localStorage.setItem("registros", JSON.stringify(registros));
+    mostrarRelatorio();
+    mostrarAviso(`Registro atualizado para ${capitalize(novoTipo)} com sucesso!`);
+
 }
 
-function salvarRegistroLocalStorage(ponto) {
-    const pontos = recuperaPontosLocalStorage();
-    pontos.push(ponto);
-    localStorage.setItem("registro", JSON.stringify(pontos));
+// Formato DD/MM/YYYY HH:MM:SS//
+function validarDataHora(dataHora) {
+    const regex =/^(0[1-9]|[12][0-9]|30)\/(0[1-9]|1[0-2])\/(\d{4}),\s(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/; 
+    return regex.test(dataHora);
 }
 
-function atualizaHora() {
-    horaMinSeg.textContent = horaCompleta();
+
+// Função auxiliar//
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function atualizaHoraDialog() {
-    dialogHora.textContent = "Hora: " + horaCompleta();
+// Função para registrar um ponto com a data e hora atuais//
+function registrarPonto(tipo) {
+    const data = new Date().toLocaleString();
+    let registros = JSON.parse(localStorage.getItem('registros')) || [];
+    registros.push({ tipo: tipo, data: data });
+    localStorage.setItem("registros", JSON.stringify(registros));
+
+    let mensagem;
+    switch (tipo) {
+        case "Entrada":
+            mensagem = "!Registro de entrada concluído com sucesso!";
+            break;
+
+        case "Saida":
+            mensagem = "!Registro de saída concluído com sucesso!";
+            break;
+
+        case "IntervaloEntrada":
+            mensagem = "!Registro de entrada de intervalo concluído com sucesso!";
+            break;
+
+        case "IntervaloSaida":
+            mensagem = "!Registro de saída de intervalo concluído com sucesso!";
+            break;
+
+    }
+    mostrarAviso(mensagem);
 }
 
-function daySemana() {
-    return arrayDayWeek[new Date().getDay()];
+
+function fecharRelatorio() {
+    const relatorio = document.getElementById("relatorio");
+    relatorio.classList.add("hidden");
+}
+function exibirNomeUsuario() {
+    const userName = localStorage.getItem('userNome'); // Recupera o nome do usuário
+    if (userName) {
+        document.getElementById('userName').innerText = userName; // Exibe o nome
+    }
 }
 
-function dataCompleta() {
-    const date = new Date();
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-}
-
-function horaCompleta() {
-    const date = new Date();
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
-}
-
-btnRegistrarPonto.addEventListener("click", () => {
-    const ultimoPonto = localStorage.getItem("tipoUltimoPonto");
-    selectTiposPonto.value = proxPonto[ultimoPonto] || "entrada";
-    dialogPonto.showModal();
-});
-
-btnDialogFechar.addEventListener("click", () => {
-    dialogPonto.close();
-});
-
-btnDialogRegistrarPonto.addEventListener("click", async () => {
-    const data = dataCompleta();
-    const hora = horaCompleta();
-    const tipoPonto = selectTiposPonto.value;
-    const location = await getUserLocation();
-
-    const ponto = {
-        data,
-        hora,
-        tipo: tipoPonto,
-        location,
-        id: Date.now()
-    };
-
-    salvarRegistroLocalStorage(ponto);
-    localStorage.setItem("tipoUltimoPonto", tipoPonto);
-    dialogPonto.close();
-
-    divAlerta.classList.remove("hidden");
-    divAlerta.classList.add("show");
-
-    setTimeout(() => {
-        divAlerta.classList.remove("show");
-        divAlerta.classList.add("hidden");
-    }, 5000);
-});
-
-setInterval(atualizarDataHora, 1000);
-atualizarDataHora();
+// Chama a função ao carregar a página
+window.onload = function() {
+    exibirNomeUsuario();
+   
+};
